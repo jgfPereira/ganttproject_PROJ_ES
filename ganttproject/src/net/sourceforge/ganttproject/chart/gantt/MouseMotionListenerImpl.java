@@ -29,79 +29,81 @@ import biz.ganttproject.core.time.CalendarFactory;
 import net.sourceforge.ganttproject.ChartComponentBase;
 import net.sourceforge.ganttproject.GanttGraphicArea;
 import net.sourceforge.ganttproject.chart.ChartModelImpl;
-import net.sourceforge.ganttproject.chart.item.CalendarChartItem;
-import net.sourceforge.ganttproject.chart.item.ChartItem;
-import net.sourceforge.ganttproject.chart.item.TaskBoundaryChartItem;
-import net.sourceforge.ganttproject.chart.item.TaskNotesChartItem;
-import net.sourceforge.ganttproject.chart.item.TaskProgressChartItem;
+import net.sourceforge.ganttproject.chart.item.*;
 import net.sourceforge.ganttproject.chart.mouse.MouseMotionListenerBase;
 import net.sourceforge.ganttproject.gui.UIFacade;
 import net.sourceforge.ganttproject.language.GanttLanguage;
 import net.sourceforge.ganttproject.task.Task;
 
 class MouseMotionListenerImpl extends MouseMotionListenerBase {
-  private final ChartComponentBase myChartComponent;
-  private GanttChartController myChartController;
+    private final ChartComponentBase myChartComponent;
+    private GanttChartController myChartController;
 
-  public MouseMotionListenerImpl(GanttChartController chartImplementation, ChartModelImpl chartModel,
-      UIFacade uiFacade, ChartComponentBase chartComponent) {
-    super(uiFacade, chartImplementation);
-    myChartController = chartImplementation;
-    myChartComponent = chartComponent;
-  }
+    public MouseMotionListenerImpl(GanttChartController chartImplementation, ChartModelImpl chartModel,
+                                   UIFacade uiFacade, ChartComponentBase chartComponent) {
+        super(uiFacade, chartImplementation);
+        myChartController = chartImplementation;
+        myChartComponent = chartComponent;
+    }
 
-  // Move the move on the area
-  @Override
-  public void mouseMoved(MouseEvent e) {
-    ChartItem itemUnderPoint = myChartController.getChartItemUnderMousePoint(e.getX(), e.getY());
-    Task taskUnderPoint = itemUnderPoint == null ? null : itemUnderPoint.getTask();
-    // System.err.println("[OldMouseMotionListenerImpl] mouseMoved:
-    // taskUnderPoint="+taskUnderPoint);
-    myChartController.hideTooltip();
-    if (taskUnderPoint == null) {
-      myChartComponent.setDefaultCursor();
+    // Move the move on the area
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        ChartItem itemUnderPoint = myChartController.getChartItemUnderMousePoint(e.getX(), e.getY());
+        Task taskUnderPoint = itemUnderPoint == null ? null : itemUnderPoint.getTask();
+        // System.err.println("[OldMouseMotionListenerImpl] mouseMoved:
+        // taskUnderPoint="+taskUnderPoint);
+        myChartController.hideTooltip();
+        if (taskUnderPoint == null) {
+            myChartComponent.setDefaultCursor();
 
-      if (itemUnderPoint instanceof CalendarChartItem) {
-        CalendarEvent event = findCalendarEvent(((CalendarChartItem) itemUnderPoint).getDate());
-        if (event != null) {
-          String tooltipText;
-          if (event.isRecurring) {
-            tooltipText = GanttLanguage.getInstance().formatText(
-                "timeline.holidayTooltipRecurring.pattern",
-                GanttLanguage.getInstance().getRecurringDateFormat().format(event.myDate),
-                Strings.nullToEmpty(event.getTitle()));
-          } else {
-            tooltipText = GanttLanguage.getInstance().formatText(
-                "timeline.holidayTooltip.pattern",
-                GanttLanguage.getInstance().formatDate(CalendarFactory.createGanttCalendar(event.myDate)),
-                Strings.nullToEmpty(event.getTitle()));
-          }
-          myChartController.showTooltip(e.getX(), e.getY(), tooltipText);
+            if (itemUnderPoint instanceof CalendarChartItem) {
+                CalendarEvent event = findCalendarEvent(((CalendarChartItem) itemUnderPoint).getDate());
+                if (event != null) {
+                    String tooltipText;
+                    if (event.isRecurring) {
+                        tooltipText = GanttLanguage.getInstance().formatText(
+                                "timeline.holidayTooltipRecurring.pattern",
+                                GanttLanguage.getInstance().getRecurringDateFormat().format(event.myDate),
+                                Strings.nullToEmpty(event.getTitle()));
+                    } else {
+                        tooltipText = GanttLanguage.getInstance().formatText(
+                                "timeline.holidayTooltip.pattern",
+                                GanttLanguage.getInstance().formatDate(CalendarFactory.createGanttCalendar(event.myDate)),
+                                Strings.nullToEmpty(event.getTitle()));
+                    }
+                    myChartController.showTooltip(e.getX(), e.getY(), tooltipText);
+                }
+            }
+        } else if (itemUnderPoint instanceof TaskBoundaryChartItem) {
+            Cursor cursor = ((TaskBoundaryChartItem) itemUnderPoint).isStartBoundary() ? GanttGraphicArea.W_RESIZE_CURSOR
+                    : GanttGraphicArea.E_RESIZE_CURSOR;
+            myChartComponent.setCursor(cursor);
         }
-      }
-    }
-    else if (itemUnderPoint instanceof TaskBoundaryChartItem) {
-      Cursor cursor = ((TaskBoundaryChartItem) itemUnderPoint).isStartBoundary() ? GanttGraphicArea.W_RESIZE_CURSOR
-          : GanttGraphicArea.E_RESIZE_CURSOR;
-      myChartComponent.setCursor(cursor);
-    }
-    // special cursor
-    else if (itemUnderPoint instanceof TaskProgressChartItem) {
-      myChartComponent.setCursor(GanttGraphicArea.CHANGE_PROGRESS_CURSOR);
-    }
-    else if (itemUnderPoint instanceof TaskNotesChartItem && taskUnderPoint.getNotes() != null) {
-      myChartComponent.setCursor(ChartComponentBase.HAND_CURSOR);
-      myChartController.showTooltip(e.getX(), e.getY(),
-          GanttLanguage.getInstance().formatText(
-              "task.notesTooltip.pattern", taskUnderPoint.getNotes().replace("\n", "<br>")));
-    }
-    else {
-      myChartComponent.setCursor(ChartComponentBase.HAND_CURSOR);
+        // special cursor
+        else if (itemUnderPoint instanceof TaskProgressChartItem) {
+            myChartComponent.setCursor(GanttGraphicArea.CHANGE_PROGRESS_CURSOR);
+        } else if (itemUnderPoint instanceof TaskNotesChartItem && taskUnderPoint.getNotes() != null) {
+            myChartComponent.setCursor(ChartComponentBase.HAND_CURSOR);
+            myChartController.showTooltip(e.getX(), e.getY(),
+                    GanttLanguage.getInstance().formatText(
+                            "task.notesTooltip.pattern", taskUnderPoint.getNotes().replace("\n", "<br>")));
+        } else if (itemUnderPoint instanceof TaskRegularAreaChartItem) {
+            // If it is a plain task area then either drag the task or create a
+            // dependency,
+            // depending on the settings.
+            myChartComponent.setCursor(ChartComponentBase.HAND_CURSOR);
+
+            TaskRegularAreaChartItem taskRectArea = ((TaskRegularAreaChartItem) itemUnderPoint);
+            taskRectArea.setMousePos(e.getX(), e.getY());
+            myChartController.showTooltip(e.getX(), e.getY(), taskRectArea.getTaskInfo());
+        } else {
+            myChartComponent.setCursor(ChartComponentBase.HAND_CURSOR);
+        }
+
     }
 
-  }
-
-  private CalendarEvent findCalendarEvent(Date date) {
-    return myChartComponent.getProject().getActiveCalendar().getEvent(date);
-  }
+    private CalendarEvent findCalendarEvent(Date date) {
+        return myChartComponent.getProject().getActiveCalendar().getEvent(date);
+    }
 }

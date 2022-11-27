@@ -32,7 +32,7 @@ public class ShapePaint extends TexturePaint {
   private final int[] array;
 
   private final Color foreground, background;
-
+  
   public ShapePaint(ShapePaint pattern) {
     this(pattern.width, pattern.height, pattern.array, pattern.foreground, pattern.background);
   }

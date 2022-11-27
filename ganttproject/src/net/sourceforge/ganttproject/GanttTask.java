@@ -64,14 +64,14 @@ public class GanttTask extends TaskImpl implements Serializable {
     enableEvents(true);
   }
 
-  /** @deprecated Use TimeUnit class instead and method getDuration() */
-  @Deprecated
+ // /** @deprecated Use TimeUnit class instead and method getDuration() */
+  //@Deprecated
   public int getLength() {
     return getDuration().getLength();
   }
 
-  /** @deprecated Use setDuration() */
-  @Deprecated
+  ///** @deprecated Use setDuration() */
+  //@Deprecated
   public void setLength(int l) {
     if (l <= 0) {
       throw new IllegalArgumentException("Length of task must be >=0. You've passed length=" + l + " to task=" + this);
