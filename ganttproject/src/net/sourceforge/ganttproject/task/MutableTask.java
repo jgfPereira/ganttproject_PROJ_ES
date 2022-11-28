@@ -19,6 +19,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 package net.sourceforge.ganttproject.task;
 
 import java.awt.Color;
+import java.io.File;
 
 import biz.ganttproject.core.chart.render.ShapePaint;
 import biz.ganttproject.core.time.GanttCalendar;
@@ -30,6 +31,7 @@ import biz.ganttproject.core.time.TimeDuration;
  */
 public interface MutableTask {
   void setName(String name);
+  void addFile(File f);
 
   void setMilestone(boolean isMilestone);
 

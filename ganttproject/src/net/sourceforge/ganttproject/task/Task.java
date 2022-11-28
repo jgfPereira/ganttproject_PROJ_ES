@@ -25,6 +25,7 @@ import net.sourceforge.ganttproject.document.Document;
 import net.sourceforge.ganttproject.task.dependency.TaskDependencySlice;
 
 import java.awt.*;
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -188,4 +189,8 @@ public interface Task extends MutableTask {
   boolean isSupertask();
 
   List<Document> getAttachments();
+
+  List<File> getTaskFiles();
+
+  void addFile(File f);
 }
