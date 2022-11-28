@@ -295,7 +295,6 @@ public class GanttTaskPropertiesBean extends JPanel {
         //final JButton addFilesButton2 = new JButton(UIManager.getIcon("FileChooser.upFolderIcon"));
         //JComboBox cb = (JComboBox) e.getSource();
         //File fileSelected = (File) filesMenu.getSelectedItem();
-        //System.out.println(fileSelected.toString());
 
         openFilesButton.addActionListener(new ActionListener() {
             @Override
