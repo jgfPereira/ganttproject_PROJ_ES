@@ -289,8 +289,8 @@ public class GanttTaskPropertiesBean extends JPanel {
         JPanel openFileBtnBox = new JPanel(new BorderLayout(5, 0));
         final JButton openFilesButton = new JButton(UIManager.getIcon("FileView.fileIcon"));
 
-        File[] taskFiles = selectedTasks[0].getTaskFiles().toArray(new File[selectedTasks[0].getTaskFiles().size()]);
-        JComboBox filesMenu = new JComboBox(taskFiles);
+        final File[] taskFiles = selectedTasks[0].getTaskFiles().toArray(new File[selectedTasks[0].getTaskFiles().size()]);
+        final JComboBox filesMenu = new JComboBox(taskFiles);
         //JPanel fileBtnBox2 = new JPanel(new BorderLayout(5, 0));
         //final JButton addFilesButton2 = new JButton(UIManager.getIcon("FileChooser.upFolderIcon"));
         //JComboBox cb = (JComboBox) e.getSource();
@@ -301,10 +301,19 @@ public class GanttTaskPropertiesBean extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 if (e.getSource() == openFilesButton) {
                     //open file with adequate program
-                    try {
-                        java.awt.Desktop.getDesktop().open(fileSelected);
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
+                    if(fileSelected==null){
+                        try {
+                            java.awt.Desktop.getDesktop().open(taskFiles[0]);
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                    else {
+                        try {
+                            java.awt.Desktop.getDesktop().open(fileSelected);
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
                     }
                 }
             }
