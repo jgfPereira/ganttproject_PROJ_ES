@@ -55,6 +55,7 @@ import java.awt.event.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -163,6 +164,9 @@ public class GanttTaskPropertiesBean extends JPanel {
     private File fileSelected;
     private File[] taskFiles;
 
+    private List<File> allTaskFiles;
+
+
     public GanttTaskPropertiesBean(GanttTask[] selectedTasks, IGanttProject project, UIFacade uifacade) {
         myTaskScheduleDates = new TaskScheduleDatesPanel(uifacade);
         this.selectedTasks = selectedTasks;
@@ -265,8 +269,26 @@ public class GanttTaskPropertiesBean extends JPanel {
         propertiesPanel.add(new JLabel("Add File"));
         JPanel fileBtnBox = new JPanel(new BorderLayout(5, 0));
         final JButton addFilesButton = new JButton(UIManager.getIcon("FileChooser.upFolderIcon"));
-        //JPanel fileBtnBox2 = new JPanel(new BorderLayout(5, 0));
-        //final JButton addFilesButton2 = new JButton(UIManager.getIcon("FileChooser.upFolderIcon"));
+
+        fileBtnBox.add(addFilesButton, BorderLayout.WEST);
+        propertiesPanel.add(fileBtnBox);
+
+        // create combo box to choose and open file
+        propertiesPanel.add(new JLabel("Open/Rmv File"));
+        JPanel openFileBtnBox = new JPanel(new BorderLayout(5, 0));
+        final JButton openFilesButton = new JButton(UIManager.getIcon("FileView.fileIcon"));
+        final JButton removeFilesButton = new JButton((UIManager.getIcon("OptionPane.errorIcon")));
+
+        taskFiles = selectedTasks[0].getTaskFiles().toArray(new File[0]);
+
+        final DefaultComboBoxModel comboBoxModel = new DefaultComboBoxModel(taskFiles);
+        JComboBox filesMenu = new JComboBox(comboBoxModel);
+
+        openFileBtnBox.add(openFilesButton, BorderLayout.WEST);
+        openFileBtnBox.add(filesMenu, BorderLayout.CENTER);
+        openFileBtnBox.add(removeFilesButton, BorderLayout.EAST);
+        propertiesPanel.add(openFileBtnBox);
+
         addFilesButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (e.getSource() == addFilesButton) {
@@ -281,23 +303,19 @@ public class GanttTaskPropertiesBean extends JPanel {
                         myDependenciesPanel.commit();
                         myAllocationsPanel.commit();
                         myCustomColumnPanel.commit();
+
+                        // update combobox in dynamic way - otherwhise would have to close and reopen task properties dialog
+                        comboBoxModel.addElement(file);
+
+                        List<File> tmpFiles = new ArrayList<>(Arrays.asList(taskFiles));
+                        tmpFiles.add(file);
+                        taskFiles = tmpFiles.toArray(new File[tmpFiles.size()]);
+
+
                     }
                 }
             }
         });
-
-        fileBtnBox.add(addFilesButton, BorderLayout.WEST);
-        propertiesPanel.add(fileBtnBox);
-        //fileBtnBox.add(addFilesButton2, BorderLayout.CENTER);
-        //propertiesPanel.add(fileBtnBox2);
-
-        // create combo box to choose and open file
-        propertiesPanel.add(new JLabel("Open File"));
-        JPanel openFileBtnBox = new JPanel(new BorderLayout(5, 0));
-        final JButton openFilesButton = new JButton(UIManager.getIcon("FileView.fileIcon"));
-
-        taskFiles = selectedTasks[0].getTaskFiles().toArray(new File[selectedTasks[0].getTaskFiles().size()]);
-        JComboBox filesMenu = new JComboBox(taskFiles);
 
         openFilesButton.addActionListener(new ActionListener() {
             @Override
@@ -323,6 +341,42 @@ public class GanttTaskPropertiesBean extends JPanel {
             }
         });
 
+        removeFilesButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (e.getSource() == removeFilesButton && taskFiles.length > 0) {
+
+                    // if no file is selected delete the first one on the JComboBox
+                    List<File> tmpFiles = new ArrayList<>(Arrays.asList(taskFiles));
+
+                    File removedFile;
+                    if (fileSelected == null) {
+                        removedFile = taskFiles[0];
+                        tmpFiles.remove(taskFiles[0]);
+                        taskFiles = tmpFiles.toArray(new File[tmpFiles.size()]);
+                    } else {
+                        removedFile = fileSelected;
+                        tmpFiles.remove(fileSelected);
+                        taskFiles = tmpFiles.toArray(new File[tmpFiles.size()]);
+                    }
+
+                    // update combobox in dynamic way - otherwhise would have to close and reopen task properties dialog
+                    comboBoxModel.removeElement(removedFile);
+
+                    TaskMutator mutator = selectedTasks[0].createMutator();
+                    mutator.removeFile(removedFile);
+
+                    mutator.commit();
+                    myDependenciesPanel.commit();
+                    myAllocationsPanel.commit();
+                    myCustomColumnPanel.commit();
+
+                }
+
+
+            }
+        });
+
         filesMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -330,32 +384,6 @@ public class GanttTaskPropertiesBean extends JPanel {
                 fileSelected = (File) cb.getSelectedItem();
             }
         });
-        //fileBtnBox2.add(addFilesButton2, BorderLayout.WEST);
-        //propertiesPanel.add(fileBtnBox2);
-        openFileBtnBox.add(openFilesButton, BorderLayout.WEST);
-        openFileBtnBox.add(filesMenu, BorderLayout.CENTER);
-        propertiesPanel.add(openFileBtnBox);
-
-        propertiesPanel.add(new JLabel("Delete File"));
-        JPanel deleFileBtnBox = new JPanel(new BorderLayout(5, 0));
-        final JButton deleteFilesButton = new JButton(UIManager.getIcon("OptionPane.errorIcon"));
-        deleteFilesButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (e.getSource() == deleteFilesButton) {
-                    for (int i = 0; i < taskFiles.length; i++) {
-                        if(taskFiles[i]==fileSelected){
-                            List<File> list = Arrays.asList(taskFiles);
-                            list.remove(i);
-                            File[] aux=list.toArray(taskFiles);
-                            taskFiles=aux;
-                        }
-
-                    }
-                }
-            }
-        });
-        deleFileBtnBox.add(deleteFilesButton, BorderLayout.CENTER);
-        propertiesPanel.add(deleFileBtnBox);
 
         SpringUtilities.makeCompactGrid(propertiesPanel, (propertiesPanel.getComponentCount() / 2), 2, 1, 1, 5, 5);
 

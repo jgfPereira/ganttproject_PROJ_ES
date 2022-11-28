@@ -347,6 +347,10 @@ public class TaskImpl implements Task {
         }
     }
 
+    public void removeFile(File f) {
+        taskFiles.remove(f);
+    }
+
     @Override
     public boolean isMilestone() {
         return isMilestone && Boolean.TRUE == myManager.isZeroMilestones();
@@ -711,11 +715,20 @@ public class TaskImpl implements Task {
             });
         }
 
-        public void addFile(final File f){
+        public void addFile(final File f) {
             myCommands.add(new Runnable() {
                 @Override
                 public void run() {
                     TaskImpl.this.addFile(f);
+                }
+            });
+        }
+
+        public void removeFile(final File f) {
+            myCommands.add(new Runnable() {
+                @Override
+                public void run() {
+                    TaskImpl.this.removeFile(f);
                 }
             });
         }
