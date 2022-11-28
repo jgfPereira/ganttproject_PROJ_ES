@@ -288,7 +288,6 @@ public class GanttTaskPropertiesBean extends JPanel {
         propertiesPanel.add(new JLabel("Open File"));
         JPanel openFileBtnBox = new JPanel(new BorderLayout(5, 0));
         final JButton openFilesButton = new JButton(UIManager.getIcon("FileView.fileIcon"));
-        //openFilesButton.setEnabled(false); // make unclickable - just for the icon
 
         File[] taskFiles = selectedTasks[0].getTaskFiles().toArray(new File[selectedTasks[0].getTaskFiles().size()]);
         JComboBox filesMenu = new JComboBox(taskFiles);
