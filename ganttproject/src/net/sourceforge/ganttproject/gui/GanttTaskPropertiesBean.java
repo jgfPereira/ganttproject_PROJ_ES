@@ -51,11 +51,10 @@ import org.jdesktop.swingx.JXHyperlink;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
+import java.awt.event.*;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * Real panel for editing task properties
@@ -281,6 +280,35 @@ public class GanttTaskPropertiesBean extends JPanel {
 
         fileBtnBox.add(addFilesButton, BorderLayout.WEST);
         propertiesPanel.add(fileBtnBox);
+
+        // create combo box to choose and open file
+        propertiesPanel.add(new JLabel("Open File"));
+        JPanel openFileBtnBox = new JPanel(new BorderLayout(5, 0));
+        final JButton openFilesButton = new JButton(UIManager.getIcon("FileView.fileIcon"));
+        openFilesButton.setEnabled(false); // make unclickable - just for the icon
+
+        File[] taskFiles = selectedTasks[0].getTaskFiles().toArray(new File[selectedTasks[0].getTaskFiles().size()]);
+        final JComboBox filesMenu = new JComboBox(taskFiles);
+
+        filesMenu.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JComboBox cb = (JComboBox) e.getSource();
+                File fileSelected = (File) cb.getSelectedItem();
+
+                //open file with adequate program
+                try {
+                    java.awt.Desktop.getDesktop().open(fileSelected);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+
+            }
+        });
+
+        openFileBtnBox.add(openFilesButton, BorderLayout.WEST);
+        openFileBtnBox.add(filesMenu, BorderLayout.CENTER);
+        propertiesPanel.add(openFileBtnBox);
 
         SpringUtilities.makeCompactGrid(propertiesPanel, (propertiesPanel.getComponentCount() / 2), 2, 1, 1, 5, 5);
 
