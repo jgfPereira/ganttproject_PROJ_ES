@@ -26,7 +26,7 @@ public class TaskRegularAreaChartItem extends ChartItem {
         return"Task Name - " + task.getName() + newLine
                 + "Task Duration - " + task.getDuration() + newLine
                 + "Task Priority - " + task.getPriority() + newLine
-                + "Task Completion Percentage - " + task.getCompletionPercentage();
+                + "Task Completion Percentage - " + task.getCompletionPercentage() + " %";
     }
 
     public void setMousePos(int x, int y) {
