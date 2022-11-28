@@ -24,6 +24,7 @@ public class TaskRegularAreaChartItem extends ChartItem {
         Task task = getTask();
         final String newLine = "\n";
         return"Task Name - " + task.getName() + newLine
+                + "Task ID - " + task.getTaskID() + newLine
                 + "Task Duration - " + task.getDuration() + newLine
                 + "Task Priority - " + task.getPriority() + newLine
                 + "Task Completion Percentage - " + task.getCompletionPercentage() + " %";

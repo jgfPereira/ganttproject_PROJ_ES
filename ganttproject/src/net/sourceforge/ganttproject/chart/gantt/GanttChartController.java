@@ -236,9 +236,9 @@ public class GanttChartController extends AbstractChartImplementation implements
         @Override
         public void run() {
           RoundedBalloonStyle inset = new RoundedBalloonStyle(10, 10, Color.CYAN, Color.BLUE.darker());
-          java.awt.Rectangle offset = new java.awt.Rectangle(x-10, y, 10, 10);
+          java.awt.Rectangle offset = new java.awt.Rectangle(x-15, y, 10, 10);
           myTooltip = new CustomBalloonTip(getChartComponent(), new JLabel(text), offset,
-              inset, BalloonTip.Orientation.LEFT_ABOVE, BalloonTip.AttachLocation.ALIGNED, 15, 15, true);//new RoundedBalloonStyle(Color.CYAN, Color.BLUE.darker()), BalloonTip.Orientation.LEFT_ABOVE, BalloonTip.AttachLocation.ALIGNED, 20, 20, true);
+              inset, BalloonTip.Orientation.LEFT_ABOVE, BalloonTip.AttachLocation.ALIGNED, 15, 15, true);
           myTooltip.setCloseButton(null);
           myTooltip.setVisible(true);
         }
