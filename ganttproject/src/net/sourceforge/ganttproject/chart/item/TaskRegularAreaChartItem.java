@@ -22,10 +22,10 @@ public class TaskRegularAreaChartItem extends ChartItem {
 
     public String getTaskInfo() {
         Task task = getTask();
-        final String newLine = System.getProperty("line.separator");
-        return"Task Name - " + task.getName() + " | "
-                + "Task Duration - " + task.getDuration() + " | "
-                + "Task Priority - " + task.getPriority() + " | "
+        final String newLine = "\n";
+        return"Task Name - " + task.getName() + newLine
+                + "Task Duration - " + task.getDuration() + newLine
+                + "Task Priority - " + task.getPriority() + newLine
                 + "Task Completion Percentage - " + task.getCompletionPercentage();
     }
 
