@@ -291,24 +291,22 @@ public class GanttTaskPropertiesBean extends JPanel {
 
         final File[] taskFiles = selectedTasks[0].getTaskFiles().toArray(new File[selectedTasks[0].getTaskFiles().size()]);
         final JComboBox filesMenu = new JComboBox(taskFiles);
-        //JPanel fileBtnBox2 = new JPanel(new BorderLayout(5, 0));
-        //final JButton addFilesButton2 = new JButton(UIManager.getIcon("FileChooser.upFolderIcon"));
-        //JComboBox cb = (JComboBox) e.getSource();
-        //File fileSelected = (File) filesMenu.getSelectedItem();
 
         openFilesButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (e.getSource() == openFilesButton) {
                     //open file with adequate program
-                    if(fileSelected==null){
+                    if (fileSelected == null) {
                         try {
-                            java.awt.Desktop.getDesktop().open(taskFiles[0]);
+                            if(taskFiles.length > 0){
+                                java.awt.Desktop.getDesktop().open(taskFiles[0]);
+                            }
+
                         } catch (IOException ex) {
                             ex.printStackTrace();
                         }
-                    }
-                    else {
+                    } else {
                         try {
                             java.awt.Desktop.getDesktop().open(fileSelected);
                         } catch (IOException ex) {
@@ -324,18 +322,9 @@ public class GanttTaskPropertiesBean extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 JComboBox cb = (JComboBox) e.getSource();
                 fileSelected = (File) cb.getSelectedItem();
-
-                //open file with adequate program
-                //try {
-                //    java.awt.Desktop.getDesktop().open(fileSelected);
-                //} catch (IOException ex) {
-                //    ex.printStackTrace();
-                //}
-
             }
         });
-        //fileBtnBox2.add(addFilesButton2, BorderLayout.WEST);
-        //propertiesPanel.add(fileBtnBox2);
+
         openFileBtnBox.add(openFilesButton, BorderLayout.WEST);
         openFileBtnBox.add(filesMenu, BorderLayout.CENTER);
         propertiesPanel.add(openFileBtnBox);
