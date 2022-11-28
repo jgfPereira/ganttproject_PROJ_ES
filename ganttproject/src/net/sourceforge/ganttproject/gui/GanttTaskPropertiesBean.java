@@ -158,6 +158,8 @@ public class GanttTaskPropertiesBean extends JPanel {
     private JCheckBox myShowInTimeline;
     private AbstractAction myOnEarliestBeginToggle;
 
+    private File fileSelected;
+
     public GanttTaskPropertiesBean(GanttTask[] selectedTasks, IGanttProject project, UIFacade uifacade) {
         myTaskScheduleDates = new TaskScheduleDatesPanel(uifacade);
         this.selectedTasks = selectedTasks;
@@ -269,6 +271,7 @@ public class GanttTaskPropertiesBean extends JPanel {
                         File file = fc.getSelectedFile();
                         TaskMutator mutator = selectedTasks[0].createMutator();
                         mutator.addFile(file);
+
                         mutator.commit();
                         myDependenciesPanel.commit();
                         myAllocationsPanel.commit();
@@ -285,27 +288,47 @@ public class GanttTaskPropertiesBean extends JPanel {
         propertiesPanel.add(new JLabel("Open File"));
         JPanel openFileBtnBox = new JPanel(new BorderLayout(5, 0));
         final JButton openFilesButton = new JButton(UIManager.getIcon("FileView.fileIcon"));
-        openFilesButton.setEnabled(false); // make unclickable - just for the icon
+        //openFilesButton.setEnabled(false); // make unclickable - just for the icon
 
         File[] taskFiles = selectedTasks[0].getTaskFiles().toArray(new File[selectedTasks[0].getTaskFiles().size()]);
-        final JComboBox filesMenu = new JComboBox(taskFiles);
+        JComboBox filesMenu = new JComboBox(taskFiles);
+        //JPanel fileBtnBox2 = new JPanel(new BorderLayout(5, 0));
+        //final JButton addFilesButton2 = new JButton(UIManager.getIcon("FileChooser.upFolderIcon"));
+        //JComboBox cb = (JComboBox) e.getSource();
+        //File fileSelected = (File) filesMenu.getSelectedItem();
+        //System.out.println(fileSelected.toString());
+
+        openFilesButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (e.getSource() == openFilesButton) {
+                    //open file with adequate program
+                    try {
+                        java.awt.Desktop.getDesktop().open(fileSelected);
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+        });
 
         filesMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JComboBox cb = (JComboBox) e.getSource();
-                File fileSelected = (File) cb.getSelectedItem();
+                fileSelected = (File) cb.getSelectedItem();
 
                 //open file with adequate program
-                try {
-                    java.awt.Desktop.getDesktop().open(fileSelected);
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
+                //try {
+                //    java.awt.Desktop.getDesktop().open(fileSelected);
+                //} catch (IOException ex) {
+                //    ex.printStackTrace();
+                //}
 
             }
         });
-
+        //fileBtnBox2.add(addFilesButton2, BorderLayout.WEST);
+        //propertiesPanel.add(fileBtnBox2);
         openFileBtnBox.add(openFilesButton, BorderLayout.WEST);
         openFileBtnBox.add(filesMenu, BorderLayout.CENTER);
         propertiesPanel.add(openFileBtnBox);
