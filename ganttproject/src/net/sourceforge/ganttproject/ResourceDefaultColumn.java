@@ -40,6 +40,7 @@ public enum ResourceDefaultColumn {
   PHONE(new ColumnList.ColumnStub("3", null, false, -1, 50), String.class, "tableColResourcePhone", true),
   ROLE_IN_TASK(new ColumnList.ColumnStub("4", null, false, -1, 75), String.class, "tableColResourceRoleForTask", true),
   STANDARD_RATE(new ColumnList.ColumnStub("5", null, false, -1, 75), Double.class, "tableColResourceRate", true);
+  //TEAM(new ColumnList.ColumnStub("6", null, false, -1, 75), String.class, "tableColResourceRate", true);
 
   private final Column myDelegate;
   private final boolean isEditable;

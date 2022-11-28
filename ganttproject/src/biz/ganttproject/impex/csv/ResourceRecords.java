@@ -39,7 +39,7 @@ import java.util.List;
 class ResourceRecords extends RecordGroup {
 
   public enum ResourceFields {
-    ID("tableColID"), NAME("tableColResourceName"), EMAIL("tableColResourceEMail"), PHONE("tableColResourcePhone"), ROLE("tableColResourceRole");
+    ID("tableColID"), NAME("tableColResourceName"), EMAIL("tableColResourceEMail"), PHONE("tableColResourcePhone"), ROLE("tableColResourceRole"), TEAM("equipa crl");
 
     private final String text;
 

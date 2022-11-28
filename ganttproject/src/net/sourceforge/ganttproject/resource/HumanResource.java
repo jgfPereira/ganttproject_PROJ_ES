@@ -54,6 +54,8 @@ public class HumanResource implements CustomPropertyHolder {
 
   private String email = "";
 
+  private String team = "";
+
   private Role myRole;
 
   private String description;

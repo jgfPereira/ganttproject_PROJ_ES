@@ -22,6 +22,7 @@ import biz.ganttproject.core.chart.canvas.Canvas.Rectangle;
 import com.google.common.collect.Lists;
 import net.java.balloontip.BalloonTip;
 import net.java.balloontip.CustomBalloonTip;
+import net.java.balloontip.styles.RoundedBalloonStyle;
 import net.java.balloontip.styles.ToolTipBalloonStyle;
 import net.sourceforge.ganttproject.AbstractChartImplementation;
 import net.sourceforge.ganttproject.ChartComponentBase;
@@ -65,6 +66,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.geom.Ellipse2D;
 import java.util.List;
 
 public class GanttChartController extends AbstractChartImplementation implements ChartImplementation {
@@ -75,6 +77,7 @@ public class GanttChartController extends AbstractChartImplementation implements
   private final MouseListenerImpl myMouseListener;
   private final MouseMotionListenerImpl myMouseMotionListener;
   protected CustomBalloonTip myTooltip;
+  protected BalloonTip hisToolTip;
   private final TaskSelectionManager mySelectionManager;
 
   public GanttChartController(IGanttProject project, UIFacade uiFacade, ChartModelImpl chartModel,
@@ -232,9 +235,10 @@ public class GanttChartController extends AbstractChartImplementation implements
       scheduleTask(new Runnable() {
         @Override
         public void run() {
-          java.awt.Rectangle offset = new java.awt.Rectangle(x-30, y, 100, 100);
+          RoundedBalloonStyle inset = new RoundedBalloonStyle(10, 10, Color.CYAN, Color.BLUE.darker());
+          java.awt.Rectangle offset = new java.awt.Rectangle(x-10, y, 10, 10);
           myTooltip = new CustomBalloonTip(getChartComponent(), new JLabel(text), offset,
-              new ToolTipBalloonStyle(Color.CYAN, Color.BLUE.darker()), BalloonTip.Orientation.LEFT_ABOVE, BalloonTip.AttachLocation.ALIGNED, 20, 20, true);
+              inset, BalloonTip.Orientation.LEFT_ABOVE, BalloonTip.AttachLocation.ALIGNED, 15, 15, true);//new RoundedBalloonStyle(Color.CYAN, Color.BLUE.darker()), BalloonTip.Orientation.LEFT_ABOVE, BalloonTip.AttachLocation.ALIGNED, 20, 20, true);
           myTooltip.setCloseButton(null);
           myTooltip.setVisible(true);
         }
