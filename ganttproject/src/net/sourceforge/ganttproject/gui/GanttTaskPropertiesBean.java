@@ -319,12 +319,17 @@ public class GanttTaskPropertiesBean extends JPanel {
         propertiesPanel.add(new JLabel("Keep the merged Files"));
         final JCheckBox keep_files = new JCheckBox();
         propertiesPanel.add(keep_files);
+        keep_files.doClick();
 
         delete_files.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if(delete_files.isSelected()) {
                     if (keep_files.isSelected()) {
                         keep_files.doClick();
+                    }
+                }else{
+                    if(!keep_files.isSelected()){
+                        delete_files.doClick();
                     }
                 }
             }
@@ -335,6 +340,10 @@ public class GanttTaskPropertiesBean extends JPanel {
                 if(keep_files.isSelected()) {
                     if (delete_files.isSelected()) {
                         delete_files.doClick();
+                    }
+                }else{
+                    if(!delete_files.isSelected()){
+                        keep_files.doClick();
                     }
                 }
             }
