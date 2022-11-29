@@ -383,41 +383,7 @@ public class GanttTaskPropertiesBean extends JPanel {
                     // update combobox in dynamic way - otherwhise would have to close and reopen task properties dialog
                     comboBoxModel.removeElement(removedFile);
                     mergeBoxModel.removeElement(removedFile);
-                    mergeBoxModel2.addElement(removedFile);
-
-                    TaskMutator mutator = selectedTasks[0].createMutator();
-                    mutator.removeFile(removedFile);
-
-                    mutator.commit();
-                    myDependenciesPanel.commit();
-                    myAllocationsPanel.commit();
-                    myCustomColumnPanel.commit();
-                }
-            }
-        });
-
-        removeFilesButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (e.getSource() == removeFilesButton && taskFiles.length > 0) {
-
-                    // if no file is selected delete the first one on the JComboBox
-                    List<File> tmpFiles = new ArrayList<>(Arrays.asList(taskFiles));
-
-                    File removedFile;
-                    if (fileSelected == null) {
-                        removedFile = taskFiles[0];
-                        tmpFiles.remove(taskFiles[0]);
-                        taskFiles = tmpFiles.toArray(new File[tmpFiles.size()]);
-                    } else {
-                        removedFile = fileSelected;
-                        tmpFiles.remove(fileSelected);
-                        taskFiles = tmpFiles.toArray(new File[tmpFiles.size()]);
-                    }
-
-                    // update combobox in dynamic way - otherwhise would have to close and reopen task properties dialog
-                    comboBoxModel.removeElement(removedFile);
-                    mergeBoxModel.removeElement(removedFile);
+                    mergeBoxModel2.removeElement(removedFile);
 
                     TaskMutator mutator = selectedTasks[0].createMutator();
                     mutator.removeFile(removedFile);
@@ -466,9 +432,11 @@ public class GanttTaskPropertiesBean extends JPanel {
                     System.out.println("passou2");
                     String name1 = firstMerge.getName().split(".")[1];
                     String name2 = secondMerge.getName().split(".")[1];
+                    String filename1 = firstMerge.getName().split(".")[0];
+                    String filename2 = secondMerge.getName().split(".")[0];
                     System.out.println(name1);
                     System.out.println(name2);
-                    if((name1.equals("txt")) && (name2.equals("txt")) && (!name1.equals(name2))){
+                    if((name1.equals("txt")) && (name2.equals("txt")) && (!filename1.equals(filename2))){
                         System.out.println("passou3");
                         System.out.println(firstMerge.getName());
                         System.out.println(secondMerge.getName());
