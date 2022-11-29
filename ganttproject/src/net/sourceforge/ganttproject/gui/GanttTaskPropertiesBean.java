@@ -236,9 +236,6 @@ public class GanttTaskPropertiesBean extends JPanel {
         colorBox.add(builder.createColorComponent(myTaskColorOption).getJComponent(), BorderLayout.WEST);
         //colorBox.add(Box.createHorizontalStrut(5));
         colorBox.add(new JXHyperlink(mySetDefaultColorAction), BorderLayout.CENTER);
-        //colorBox.add(Box.createHorizontalGlue());
-        //colorBox.add(Box.createHorizontalGlue());
-        //colorBox.add(Box.createHorizontalGlue());
 
         propertiesPanel.add(new JLabel(language.getText("colors")));
         propertiesPanel.add(colorBox);
