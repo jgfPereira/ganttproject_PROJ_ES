@@ -289,6 +289,24 @@ public class GanttTaskPropertiesBean extends JPanel {
         openFileBtnBox.add(removeFilesButton, BorderLayout.EAST);
         propertiesPanel.add(openFileBtnBox);
 
+        // create combo box to merge two files
+        propertiesPanel.add(new JLabel("Merge Txt Files"));
+        JPanel mergeFileBtnBox = new JPanel(new BorderLayout(5, 0));
+        final JButton mergeFilesButton = new JButton(UIManager.getIcon("FileChooser.detailsViewIcon"));
+        final DefaultComboBoxModel mergeBoxModel = new DefaultComboBoxModel(taskFiles);
+        JComboBox mergeFilesMenu = new JComboBox(mergeBoxModel);
+        mergeFileBtnBox.add(mergeFilesButton, BorderLayout.WEST);
+        mergeFileBtnBox.add(mergeFilesMenu, BorderLayout.CENTER);
+        propertiesPanel.add(mergeFileBtnBox);
+
+        propertiesPanel.add(new JLabel("Select second file:"));
+        JPanel mergeMenu2Box = new JPanel(new BorderLayout(5, 0));
+        final DefaultComboBoxModel mergeBoxModel2 = new DefaultComboBoxModel(taskFiles);
+        JComboBox mergeFilesMenu2 = new JComboBox(mergeBoxModel2);
+        mergeMenu2Box.add(mergeFilesMenu2, BorderLayout.CENTER);
+        propertiesPanel.add(mergeMenu2Box);
+
+
         addFilesButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (e.getSource() == addFilesButton) {
