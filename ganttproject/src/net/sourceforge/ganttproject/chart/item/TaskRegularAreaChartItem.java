@@ -6,6 +6,7 @@ package net.sourceforge.ganttproject.chart.item;
 import net.sourceforge.ganttproject.chart.gantt.GanttChartController;
 import net.sourceforge.ganttproject.task.Task;
 
+import javax.swing.*;
 import java.awt.*;
 
 /**

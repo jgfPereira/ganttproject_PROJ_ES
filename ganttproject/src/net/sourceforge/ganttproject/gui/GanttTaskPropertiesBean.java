@@ -274,7 +274,7 @@ public class GanttTaskPropertiesBean extends JPanel {
         propertiesPanel.add(fileBtnBox);
 
         // create combo box to choose and open file
-        propertiesPanel.add(new JLabel("Open/Rmv File"));
+        propertiesPanel.add(new JLabel("Open/Remove File"));
         JPanel openFileBtnBox = new JPanel(new BorderLayout(5, 0));
         final JButton openFilesButton = new JButton(UIManager.getIcon("FileView.fileIcon"));
         final JButton removeFilesButton = new JButton((UIManager.getIcon("OptionPane.errorIcon")));
@@ -288,6 +288,19 @@ public class GanttTaskPropertiesBean extends JPanel {
         openFileBtnBox.add(filesMenu, BorderLayout.CENTER);
         openFileBtnBox.add(removeFilesButton, BorderLayout.EAST);
         propertiesPanel.add(openFileBtnBox);
+
+        // create combo box to merge two files
+        propertiesPanel.add(new JLabel("Merge Txt Files"));
+        JPanel mergeFileBtnBox = new JPanel(new BorderLayout(5, 0));
+        final JButton mergeFilesButton = new JButton(UIManager.getIcon("FileChooser.detailsViewIcon"));
+
+        final DefaultComboBoxModel mergeBoxModel = new DefaultComboBoxModel(taskFiles);
+        JComboBox mergeFilesMenu = new JComboBox(mergeBoxModel);
+
+        mergeFileBtnBox.add(mergeFilesButton, BorderLayout.WEST);
+        mergeFileBtnBox.add(mergeFilesMenu, BorderLayout.CENTER);
+        //mergeFileBtnBox.add(mergeFilesMenu, BorderLayout.EAST);
+        propertiesPanel.add(mergeFileBtnBox);
 
         addFilesButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -306,6 +319,7 @@ public class GanttTaskPropertiesBean extends JPanel {
 
                         // update combobox in dynamic way - otherwhise would have to close and reopen task properties dialog
                         comboBoxModel.addElement(file);
+                        mergeBoxModel.addElement(file);
 
                         List<File> tmpFiles = new ArrayList<>(Arrays.asList(taskFiles));
                         tmpFiles.add(file);
@@ -362,6 +376,7 @@ public class GanttTaskPropertiesBean extends JPanel {
 
                     // update combobox in dynamic way - otherwhise would have to close and reopen task properties dialog
                     comboBoxModel.removeElement(removedFile);
+                    mergeBoxModel.removeElement(removedFile);
 
                     TaskMutator mutator = selectedTasks[0].createMutator();
                     mutator.removeFile(removedFile);
@@ -376,6 +391,8 @@ public class GanttTaskPropertiesBean extends JPanel {
 
             }
         });
+
+
 
         filesMenu.addActionListener(new ActionListener() {
             @Override

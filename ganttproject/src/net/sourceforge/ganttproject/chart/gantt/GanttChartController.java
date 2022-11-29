@@ -54,6 +54,7 @@ import net.sourceforge.ganttproject.gui.TaskTreeUIFacade;
 import net.sourceforge.ganttproject.gui.UIFacade;
 import net.sourceforge.ganttproject.task.Task;
 import net.sourceforge.ganttproject.task.TaskManager;
+import net.sourceforge.ganttproject.task.TaskMutator;
 import net.sourceforge.ganttproject.task.TaskSelectionManager;
 import net.sourceforge.ganttproject.task.dependency.TaskDependency;
 import net.sourceforge.ganttproject.task.dependency.TaskDependency.Hardness;
@@ -63,10 +64,9 @@ import org.jdesktop.swingx.treetable.DefaultMutableTreeTableNode;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
 import java.awt.geom.Ellipse2D;
+import java.io.File;
 import java.util.List;
 
 public class GanttChartController extends AbstractChartImplementation implements ChartImplementation {
@@ -236,9 +236,9 @@ public class GanttChartController extends AbstractChartImplementation implements
         @Override
         public void run() {
           RoundedBalloonStyle inset = new RoundedBalloonStyle(10, 10, Color.CYAN, Color.BLUE.darker());
-          java.awt.Rectangle offset = new java.awt.Rectangle(x-15, y, 10, 10);
+          java.awt.Rectangle offset = new java.awt.Rectangle(x - 15, y, 10, 10);
           myTooltip = new CustomBalloonTip(getChartComponent(), new JLabel(text), offset,
-              inset, BalloonTip.Orientation.LEFT_ABOVE, BalloonTip.AttachLocation.ALIGNED, 15, 15, true);
+                  inset, BalloonTip.Orientation.LEFT_ABOVE, BalloonTip.AttachLocation.ALIGNED, 15, 15, true);
           myTooltip.setCloseButton(null);
           myTooltip.setVisible(true);
         }
