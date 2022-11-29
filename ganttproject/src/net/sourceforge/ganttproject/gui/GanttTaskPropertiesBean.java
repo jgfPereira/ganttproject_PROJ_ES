@@ -296,16 +296,18 @@ public class GanttTaskPropertiesBean extends JPanel {
         propertiesPanel.add(new JLabel("Merge Txt Files"));
         JPanel mergeFileBtnBox = new JPanel(new BorderLayout(5, 0));
         final JButton mergeFilesButton = new JButton(UIManager.getIcon("FileChooser.detailsViewIcon"));
-
         final DefaultComboBoxModel mergeBoxModel = new DefaultComboBoxModel(taskFiles);
         JComboBox mergeFilesMenu = new JComboBox(mergeBoxModel);
-        final DefaultComboBoxModel mergeBoxModel2 = new DefaultComboBoxModel(taskFiles);
-        JComboBox mergeFilesMenu2 = new JComboBox(mergeBoxModel2);
-
         mergeFileBtnBox.add(mergeFilesButton, BorderLayout.WEST);
         mergeFileBtnBox.add(mergeFilesMenu, BorderLayout.CENTER);
-        mergeFileBtnBox.add(mergeFilesMenu2, BorderLayout.EAST);
         propertiesPanel.add(mergeFileBtnBox);
+
+        propertiesPanel.add(new JLabel("Select second file:"));
+        JPanel mergeMenu2Box = new JPanel(new BorderLayout(5, 0));
+        final DefaultComboBoxModel mergeBoxModel2 = new DefaultComboBoxModel(taskFiles);
+        JComboBox mergeFilesMenu2 = new JComboBox(mergeBoxModel2);
+        mergeMenu2Box.add(mergeFilesMenu2, BorderLayout.CENTER);
+        propertiesPanel.add(mergeMenu2Box);
 
         addFilesButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -432,7 +434,6 @@ public class GanttTaskPropertiesBean extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (taskFiles.length > 1) {
-                    // if no file is selected delete the first one on the JComboBox
                     if (fileSelected == null) {
                         firstMerge = taskFiles[0];
                     } else {
@@ -446,7 +447,6 @@ public class GanttTaskPropertiesBean extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (taskFiles.length > 1) {
-                    // if no file is selected delete the second one on the JComboBox
                     if (fileSelected == null) {
                         secondMerge = taskFiles[1];
                     } else {
