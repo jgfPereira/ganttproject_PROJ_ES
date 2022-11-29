@@ -166,6 +166,9 @@ public class GanttTaskPropertiesBean extends JPanel {
 
     private List<File> allTaskFiles;
 
+    private File firstMerge;
+    private File secondMerge;
+
 
     public GanttTaskPropertiesBean(GanttTask[] selectedTasks, IGanttProject project, UIFacade uifacade) {
         myTaskScheduleDates = new TaskScheduleDatesPanel(uifacade);
@@ -296,10 +299,12 @@ public class GanttTaskPropertiesBean extends JPanel {
 
         final DefaultComboBoxModel mergeBoxModel = new DefaultComboBoxModel(taskFiles);
         JComboBox mergeFilesMenu = new JComboBox(mergeBoxModel);
+        final DefaultComboBoxModel mergeBoxModel2 = new DefaultComboBoxModel(taskFiles);
+        JComboBox mergeFilesMenu2 = new JComboBox(mergeBoxModel2);
 
         mergeFileBtnBox.add(mergeFilesButton, BorderLayout.WEST);
         mergeFileBtnBox.add(mergeFilesMenu, BorderLayout.CENTER);
-        //mergeFileBtnBox.add(mergeFilesMenu, BorderLayout.EAST);
+        mergeFileBtnBox.add(mergeFilesMenu2, BorderLayout.EAST);
         propertiesPanel.add(mergeFileBtnBox);
 
         addFilesButton.addActionListener(new ActionListener() {
@@ -320,12 +325,11 @@ public class GanttTaskPropertiesBean extends JPanel {
                         // update combobox in dynamic way - otherwhise would have to close and reopen task properties dialog
                         comboBoxModel.addElement(file);
                         mergeBoxModel.addElement(file);
+                        mergeBoxModel2.addElement(file);
 
                         List<File> tmpFiles = new ArrayList<>(Arrays.asList(taskFiles));
                         tmpFiles.add(file);
                         taskFiles = tmpFiles.toArray(new File[tmpFiles.size()]);
-
-
                     }
                 }
             }
@@ -377,6 +381,7 @@ public class GanttTaskPropertiesBean extends JPanel {
                     // update combobox in dynamic way - otherwhise would have to close and reopen task properties dialog
                     comboBoxModel.removeElement(removedFile);
                     mergeBoxModel.removeElement(removedFile);
+                    mergeBoxModel2.addElement(removedFile);
 
                     TaskMutator mutator = selectedTasks[0].createMutator();
                     mutator.removeFile(removedFile);
@@ -385,20 +390,117 @@ public class GanttTaskPropertiesBean extends JPanel {
                     myDependenciesPanel.commit();
                     myAllocationsPanel.commit();
                     myCustomColumnPanel.commit();
-
                 }
-
-
             }
         });
 
-
-
-        filesMenu.addActionListener(new ActionListener() {
+        removeFilesButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JComboBox cb = (JComboBox) e.getSource();
-                fileSelected = (File) cb.getSelectedItem();
+                if (e.getSource() == removeFilesButton && taskFiles.length > 0) {
+
+                    // if no file is selected delete the first one on the JComboBox
+                    List<File> tmpFiles = new ArrayList<>(Arrays.asList(taskFiles));
+
+                    File removedFile;
+                    if (fileSelected == null) {
+                        removedFile = taskFiles[0];
+                        tmpFiles.remove(taskFiles[0]);
+                        taskFiles = tmpFiles.toArray(new File[tmpFiles.size()]);
+                    } else {
+                        removedFile = fileSelected;
+                        tmpFiles.remove(fileSelected);
+                        taskFiles = tmpFiles.toArray(new File[tmpFiles.size()]);
+                    }
+
+                    // update combobox in dynamic way - otherwhise would have to close and reopen task properties dialog
+                    comboBoxModel.removeElement(removedFile);
+                    mergeBoxModel.removeElement(removedFile);
+
+                    TaskMutator mutator = selectedTasks[0].createMutator();
+                    mutator.removeFile(removedFile);
+
+                    mutator.commit();
+                    myDependenciesPanel.commit();
+                    myAllocationsPanel.commit();
+                    myCustomColumnPanel.commit();
+                }
+            }
+        });
+
+        mergeFilesMenu.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (e.getSource() == mergeFilesButton && taskFiles.length > 1) {
+                    // if no file is selected delete the first one on the JComboBox
+                    if (fileSelected == null) {
+                        firstMerge = taskFiles[0];
+                    } else {
+                        firstMerge = fileSelected;
+                    }
+                }
+            }
+        });
+
+        mergeFilesMenu2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (e.getSource() == mergeFilesButton && taskFiles.length > 1) {
+                    // if no file is selected delete the second one on the JComboBox
+                    if (fileSelected == null) {
+                        secondMerge = taskFiles[1];
+                    } else {
+                        secondMerge = fileSelected;
+                    }
+                }
+            }
+        });
+
+        mergeFilesButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if ((firstMerge != null) && (secondMerge != null)) {
+                    String name1 = firstMerge.getName().split(".")[1];
+                    String name2 = secondMerge.getName().split(".")[1];
+                    if((name1.equals("txt")) && (name2.equals("txt")) && (!name1.equals(name2))){
+                    /*
+                    // PrintWriter object for file3.txt
+                    PrintWriter pw = new PrintWriter("file3.txt");
+
+                    // BufferedReader object for file1.txt
+                    BufferedReader br = new BufferedReader(new FileReader("file1.txt"));
+
+                    String line = br.readLine();
+
+                    // loop to copy each line of
+                    // file1.txt to  file3.txt
+                    while (line != null)
+                    {
+                        pw.println(line);
+                        line = br.readLine();
+                    }
+
+                    br = new BufferedReader(new FileReader("file2.txt"));
+
+                    line = br.readLine();
+
+                    // loop to copy each line of
+                    // file2.txt to  file3.txt
+                    while(line != null)
+                    {
+                        pw.println(line);
+                        line = br.readLine();
+                    }
+
+                    pw.flush();
+
+                    // closing resources
+                    br.close();
+                    pw.close();
+*/
+                    }
+
+                }
             }
         });
 
