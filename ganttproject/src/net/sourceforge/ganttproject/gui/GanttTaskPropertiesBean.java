@@ -312,6 +312,34 @@ public class GanttTaskPropertiesBean extends JPanel {
         propertiesPanel.add(mergeMenu2Box);
 
 
+        propertiesPanel.add(new JLabel("Delete the merged Files"));
+        final JCheckBox delete_files = new JCheckBox();
+        propertiesPanel.add(delete_files);
+
+        propertiesPanel.add(new JLabel("Keep the merged Files"));
+        final JCheckBox keep_files = new JCheckBox();
+        propertiesPanel.add(keep_files);
+
+        delete_files.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if(delete_files.isSelected()) {
+                    if (keep_files.isSelected()) {
+                        keep_files.doClick();
+                    }
+                }
+            }
+        });
+
+        keep_files.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if(keep_files.isSelected()) {
+                    if (delete_files.isSelected()) {
+                        delete_files.doClick();
+                    }
+                }
+            }
+        });
+
         addFilesButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (e.getSource() == addFilesButton) {
@@ -437,7 +465,6 @@ public class GanttTaskPropertiesBean extends JPanel {
                     } else {
                         firstMerge = fileSelectedMerge1;
                     }
-
                     if (fileSelectedMerge2 == null) {
                         secondMerge = taskFiles[1];
                     } else {
@@ -474,8 +501,23 @@ public class GanttTaskPropertiesBean extends JPanel {
                 comboBoxModel.addElement(mergedFile);
                 mergeBoxModel.addElement(mergedFile);
                 mergeBoxModel2.addElement(mergedFile);
+
+                if(delete_files.isSelected()){
+                    comboBoxModel.removeElement(firstMerge);
+                    mergeBoxModel.removeElement(firstMerge);
+                    mergeBoxModel2.removeElement(firstMerge);
+                    comboBoxModel.removeElement(secondMerge);
+                    mergeBoxModel.removeElement(secondMerge);
+                    mergeBoxModel2.removeElement(secondMerge);
+                }
+
                 List<File> tmpFiles = new ArrayList<>(Arrays.asList(taskFiles));
                 tmpFiles.add(mergedFile);
+                if(delete_files.isSelected()){
+                    tmpFiles.remove(firstMerge);
+                    tmpFiles.remove(secondMerge);
+                }
+
                 taskFiles = tmpFiles.toArray(new File[tmpFiles.size()]);
 
                 TaskMutator mutator = selectedTasks[0].createMutator();
