@@ -431,7 +431,7 @@ public class GanttTaskPropertiesBean extends JPanel {
         mergeFilesMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (e.getSource() == mergeFilesButton && taskFiles.length > 1) {
+                if (taskFiles.length > 1) {
                     // if no file is selected delete the first one on the JComboBox
                     if (fileSelected == null) {
                         firstMerge = taskFiles[0];
@@ -445,7 +445,7 @@ public class GanttTaskPropertiesBean extends JPanel {
         mergeFilesMenu2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (e.getSource() == mergeFilesButton && taskFiles.length > 1) {
+                if (taskFiles.length > 1) {
                     // if no file is selected delete the second one on the JComboBox
                     if (fileSelected == null) {
                         secondMerge = taskFiles[1];
@@ -459,10 +459,20 @@ public class GanttTaskPropertiesBean extends JPanel {
         mergeFilesButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                System.out.println("deu");
+                System.out.println(firstMerge.getName());
+                System.out.println(secondMerge.getName());
                 if ((firstMerge != null) && (secondMerge != null)) {
+                    System.out.println("passou2");
                     String name1 = firstMerge.getName().split(".")[1];
                     String name2 = secondMerge.getName().split(".")[1];
+                    System.out.println(name1);
+                    System.out.println(name2);
                     if((name1.equals("txt")) && (name2.equals("txt")) && (!name1.equals(name2))){
+                        System.out.println("passou3");
+                        System.out.println(firstMerge.getName());
+                        System.out.println(secondMerge.getName());
+                    }
                     /*
                     // PrintWriter object for file3.txt
                     PrintWriter pw = new PrintWriter("file3.txt");
@@ -498,7 +508,6 @@ public class GanttTaskPropertiesBean extends JPanel {
                     br.close();
                     pw.close();
 */
-                    }
 
                 }
             }
