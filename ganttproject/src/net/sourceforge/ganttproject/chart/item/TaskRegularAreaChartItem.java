@@ -28,6 +28,7 @@ public class TaskRegularAreaChartItem extends ChartItem {
                 + "Task Duration - " + task.getDuration() + newLine
                 + "Task Priority - " + task.getPriority() + newLine
                 + "Number of Docs Associated - " + task.getTaskFiles().size() + newLine
+                + "Number of Resources Associated - " + task.getAssignments().length + newLine
                 + "Task Completion Percentage - " + task.getCompletionPercentage() + " %";
     }
 

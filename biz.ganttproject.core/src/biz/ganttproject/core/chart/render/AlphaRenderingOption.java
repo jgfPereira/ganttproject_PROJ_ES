@@ -60,6 +60,6 @@ public class AlphaRenderingOption extends DefaultEnumerationOption<Object> {
         myIndex = i;
         break;
       }
-    }    
+    }
   }
 }

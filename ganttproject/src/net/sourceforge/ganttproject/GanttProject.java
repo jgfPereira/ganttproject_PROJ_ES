@@ -533,6 +533,7 @@ public class GanttProject extends GanttProjectBase implements ResourceView, Gant
         // }
         // }
       };
+    //System.out.println("banana");
     return myStopEditingMouseListener;
   }
 

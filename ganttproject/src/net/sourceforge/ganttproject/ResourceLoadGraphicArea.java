@@ -26,6 +26,8 @@ import net.sourceforge.ganttproject.chart.ChartViewState;
 import net.sourceforge.ganttproject.chart.ResourceChart;
 import net.sourceforge.ganttproject.chart.export.ChartImageVisitor;
 import net.sourceforge.ganttproject.chart.gantt.ClipboardContents;
+import net.sourceforge.ganttproject.chart.gantt.GanttChartController;
+import net.sourceforge.ganttproject.chart.item.ChartItem;
 import net.sourceforge.ganttproject.chart.mouse.MouseListenerBase;
 import net.sourceforge.ganttproject.chart.mouse.MouseMotionListenerBase;
 import net.sourceforge.ganttproject.gui.ResourceTreeUIFacade;
@@ -59,6 +61,8 @@ public class ResourceLoadGraphicArea extends ChartComponentBase implements Resou
   private final ChartViewState myViewState;
 
   private final ResourceTreeUIFacade myTreeUi;
+
+  private GanttChartController myChartController;
 
   public ResourceLoadGraphicArea(GanttProject app, ZoomManager zoomManager, ResourceTreeUIFacade treeUi) {
     super(app.getProject(), app.getUIFacade(), zoomManager);
@@ -113,6 +117,7 @@ public class ResourceLoadGraphicArea extends ChartComponentBase implements Resou
           super.mousePressed(e);
 
           if (text.equals(GPAction.getKeyStrokeText("mouse.drag.chart"))) {
+            //System.out.println("ola");
             startScrollView(e);
             return;
           }
@@ -237,6 +242,7 @@ public class ResourceLoadGraphicArea extends ChartComponentBase implements Resou
       myProject = project;
       myResourcePanel = resourcePanel;
     }
+
     @Override
     public boolean isEmpty() {
       return myResourcePanel.getSelectedNodes().length == 0;
@@ -247,6 +253,7 @@ public class ResourceLoadGraphicArea extends ChartComponentBase implements Resou
       super.startCopyClipboardTransaction();
       myClipboardContents = new ClipboardContents(myProject.getTaskManager());
       myResourcePanel.copySelection(myClipboardContents);
+      System.out.println(myResourcePanel);
       exportIntoSystemClipboard();
     }
 
@@ -280,5 +287,4 @@ public class ResourceLoadGraphicArea extends ChartComponentBase implements Resou
       // Do nothing.
     }
   }
-
 }
