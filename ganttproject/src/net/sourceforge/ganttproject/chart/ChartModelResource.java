@@ -23,6 +23,7 @@ import biz.ganttproject.core.option.DefaultColorOption;
 import biz.ganttproject.core.option.GPOption;
 import biz.ganttproject.core.option.GPOptionGroup;
 import biz.ganttproject.core.time.TimeUnitStack;
+import net.sourceforge.ganttproject.chart.item.ChartItem;
 import net.sourceforge.ganttproject.gui.UIConfiguration;
 import net.sourceforge.ganttproject.gui.options.model.GP1XOptionConverter;
 import net.sourceforge.ganttproject.resource.HumanResource;
@@ -53,6 +54,7 @@ public class ChartModelResource extends ChartModelBase {
   private static class ResourceLoadOption extends DefaultColorOption implements GP1XOptionConverter {
     private final String myTagName;
     private final String myAttributeName;
+
 
     ResourceLoadOption(String id, String tagName, String attributeName) {
       super(id);
@@ -174,4 +176,5 @@ public class ChartModelResource extends ChartModelBase {
   public int calculateRowHeight() {
     return Math.max(getChartUIConfiguration().getRowHeight(), getProjectConfig().getAppFontSize().get());
   }
+
 }

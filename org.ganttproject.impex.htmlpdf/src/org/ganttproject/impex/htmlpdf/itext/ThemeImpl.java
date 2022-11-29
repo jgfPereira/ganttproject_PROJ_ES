@@ -315,6 +315,7 @@ class ThemeImpl extends StylesheetImpl implements PdfPageEvent, ITextStylesheet 
 
   private String buildProjectCompletionString() {
     return String.valueOf(getProject().getTaskManager().getProjectCompletion()) + "%";
+
   }
 
   private String buildManagerString() {

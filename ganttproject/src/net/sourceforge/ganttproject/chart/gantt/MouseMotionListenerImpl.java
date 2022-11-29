@@ -99,7 +99,6 @@ class MouseMotionListenerImpl extends MouseMotionListenerBase {
             //myChartController.showTooltip(e.getX(), e.getY(), taskRectArea.getTaskInfo());
             myChartController.showTooltip(e.getX(), e.getY(), GanttLanguage.getInstance().formatText(
                     "task.notesTooltip.pattern", taskRectArea.getTaskInfo().replace("\n", "<br>")));
-
         } else {
             myChartComponent.setCursor(ChartComponentBase.HAND_CURSOR);
         }
