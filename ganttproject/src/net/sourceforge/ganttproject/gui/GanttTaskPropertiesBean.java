@@ -52,9 +52,10 @@ import org.jdesktop.swingx.JXHyperlink;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -162,9 +163,16 @@ public class GanttTaskPropertiesBean extends JPanel {
     private AbstractAction myOnEarliestBeginToggle;
 
     private File fileSelected;
+
+    private File fileSelectedMerge1;
+
+    private File fileSelectedMerge2;
     private File[] taskFiles;
 
-    private List<File> allTaskFiles;
+    private File firstMerge;
+
+    private File secondMerge;
+
 
 
     public GanttTaskPropertiesBean(GanttTask[] selectedTasks, IGanttProject project, UIFacade uifacade) {
@@ -321,6 +329,8 @@ public class GanttTaskPropertiesBean extends JPanel {
 
                         // update combobox in dynamic way - otherwhise would have to close and reopen task properties dialog
                         comboBoxModel.addElement(file);
+                        mergeBoxModel.addElement(file);
+                        mergeBoxModel2.addElement(file);
 
                         List<File> tmpFiles = new ArrayList<>(Arrays.asList(taskFiles));
                         tmpFiles.add(file);
@@ -377,6 +387,8 @@ public class GanttTaskPropertiesBean extends JPanel {
 
                     // update combobox in dynamic way - otherwhise would have to close and reopen task properties dialog
                     comboBoxModel.removeElement(removedFile);
+                    mergeBoxModel.removeElement(removedFile);
+                    mergeBoxModel2.removeElement(removedFile);
 
                     TaskMutator mutator = selectedTasks[0].createMutator();
                     mutator.removeFile(removedFile);
@@ -392,6 +404,7 @@ public class GanttTaskPropertiesBean extends JPanel {
             }
         });
 
+
         filesMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -399,6 +412,83 @@ public class GanttTaskPropertiesBean extends JPanel {
                 fileSelected = (File) cb.getSelectedItem();
             }
         });
+
+        mergeFilesMenu.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JComboBox cb = (JComboBox) e.getSource();
+                fileSelectedMerge1 = (File) cb.getSelectedItem();
+            }
+        });
+
+        mergeFilesMenu2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JComboBox cb = (JComboBox) e.getSource();
+                fileSelectedMerge2 = (File) cb.getSelectedItem();
+            }
+        });
+
+        mergeFilesButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (taskFiles.length > 1) {
+                    if (fileSelectedMerge1 == null) {
+                        firstMerge = taskFiles[0];
+                    } else {
+                        firstMerge = fileSelectedMerge1;
+                    }
+
+                    if (fileSelectedMerge2 == null) {
+                        secondMerge = taskFiles[1];
+                    } else {
+                        secondMerge = fileSelectedMerge2;
+                    }
+                } else {
+                    return;
+                }
+
+                String ext1 = firstMerge.getName().substring(firstMerge.getName().lastIndexOf('.') + 1);
+                String ext2 = secondMerge.getName().substring(secondMerge.getName().lastIndexOf('.') + 1);
+                String filename1 = firstMerge.getName().substring(0, firstMerge.getName().lastIndexOf('.'));
+                String filename2 = secondMerge.getName().substring(0, secondMerge.getName().lastIndexOf('.'));
+                File mergedFile = null;
+                if ((ext1.equals("txt")) && (ext2.equals("txt")) && (!filename1.equals(filename2))) {
+                    try {
+                        // PrintWriter object for file3.txt
+                        mergedFile = new File("merged_" + filename1 + "_" + filename2 + ".txt");
+                        PrintWriter pw = new PrintWriter(mergedFile);
+                        String file1Content = new String(Files.readAllBytes(Paths.get(firstMerge.getAbsolutePath())), StandardCharsets.UTF_8);
+                        String file2Content = new String(Files.readAllBytes(Paths.get(secondMerge.getAbsolutePath())), StandardCharsets.UTF_8);
+                        pw.append(file1Content);
+                        pw.append("\n");
+                        pw.append(file2Content);
+                        pw.flush();
+                        pw.close();
+                    }catch(IOException ex){
+                        ex.printStackTrace();
+                    }
+                }else{
+                    return;
+                }
+
+                comboBoxModel.addElement(mergedFile);
+                mergeBoxModel.addElement(mergedFile);
+                mergeBoxModel2.addElement(mergedFile);
+                List<File> tmpFiles = new ArrayList<>(Arrays.asList(taskFiles));
+                tmpFiles.add(mergedFile);
+                taskFiles = tmpFiles.toArray(new File[tmpFiles.size()]);
+
+                TaskMutator mutator = selectedTasks[0].createMutator();
+                mutator.addFile(mergedFile);
+
+                mutator.commit();
+                myDependenciesPanel.commit();
+                myAllocationsPanel.commit();
+                myCustomColumnPanel.commit();
+            }
+
+        });
+
 
         SpringUtilities.makeCompactGrid(propertiesPanel, (propertiesPanel.getComponentCount() / 2), 2, 1, 1, 5, 5);
 
