@@ -174,7 +174,6 @@ public class GanttTaskPropertiesBean extends JPanel {
     private File secondMerge;
 
 
-
     public GanttTaskPropertiesBean(GanttTask[] selectedTasks, IGanttProject project, UIFacade uifacade) {
         myTaskScheduleDates = new TaskScheduleDatesPanel(uifacade);
         this.selectedTasks = selectedTasks;
@@ -323,12 +322,12 @@ public class GanttTaskPropertiesBean extends JPanel {
 
         delete_files.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if(delete_files.isSelected()) {
+                if (delete_files.isSelected()) {
                     if (keep_files.isSelected()) {
                         keep_files.doClick();
                     }
-                }else{
-                    if(!keep_files.isSelected()){
+                } else {
+                    if (!keep_files.isSelected()) {
                         delete_files.doClick();
                     }
                 }
@@ -337,12 +336,12 @@ public class GanttTaskPropertiesBean extends JPanel {
 
         keep_files.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if(keep_files.isSelected()) {
+                if (keep_files.isSelected()) {
                     if (delete_files.isSelected()) {
                         delete_files.doClick();
                     }
-                }else{
-                    if(!delete_files.isSelected()){
+                } else {
+                    if (!delete_files.isSelected()) {
                         keep_files.doClick();
                     }
                 }
@@ -487,6 +486,7 @@ public class GanttTaskPropertiesBean extends JPanel {
                 String ext2 = secondMerge.getName().substring(secondMerge.getName().lastIndexOf('.') + 1);
                 String filename1 = firstMerge.getName().substring(0, firstMerge.getName().lastIndexOf('.'));
                 String filename2 = secondMerge.getName().substring(0, secondMerge.getName().lastIndexOf('.'));
+
                 File mergedFile = null;
                 if ((ext1.equals("txt")) && (ext2.equals("txt")) && (!filename1.equals(filename2))) {
                     try {
@@ -500,10 +500,10 @@ public class GanttTaskPropertiesBean extends JPanel {
                         pw.append(file2Content);
                         pw.flush();
                         pw.close();
-                    }catch(IOException ex){
+                    } catch (IOException ex) {
                         ex.printStackTrace();
                     }
-                }else{
+                } else {
                     return;
                 }
 
@@ -511,7 +511,7 @@ public class GanttTaskPropertiesBean extends JPanel {
                 mergeBoxModel.addElement(mergedFile);
                 mergeBoxModel2.addElement(mergedFile);
 
-                if(delete_files.isSelected()){
+                if (delete_files.isSelected()) {
                     comboBoxModel.removeElement(firstMerge);
                     mergeBoxModel.removeElement(firstMerge);
                     mergeBoxModel2.removeElement(firstMerge);
@@ -522,7 +522,7 @@ public class GanttTaskPropertiesBean extends JPanel {
 
                 List<File> tmpFiles = new ArrayList<>(Arrays.asList(taskFiles));
                 tmpFiles.add(mergedFile);
-                if(delete_files.isSelected()){
+                if (delete_files.isSelected()) {
                     tmpFiles.remove(firstMerge);
                     tmpFiles.remove(secondMerge);
                 }
@@ -531,6 +531,10 @@ public class GanttTaskPropertiesBean extends JPanel {
 
                 TaskMutator mutator = selectedTasks[0].createMutator();
                 mutator.addFile(mergedFile);
+                if (delete_files.isSelected()) {
+                    mutator.removeFile(firstMerge);
+                    mutator.removeFile(secondMerge);
+                }
 
                 mutator.commit();
                 myDependenciesPanel.commit();
@@ -546,7 +550,6 @@ public class GanttTaskPropertiesBean extends JPanel {
         JPanel propertiesWrapper = new JPanel(new BorderLayout());
         propertiesWrapper.add(propertiesPanel, BorderLayout.NORTH);
         generalPanel = new JPanel(new SpringLayout());
-        //generalPanel.add(new JLayer<JPanel>(propertiesPanel, layerUi));
         generalPanel.add(propertiesWrapper);
         generalPanel.add(notesPanel);
         SpringUtilities.makeCompactGrid(generalPanel, 1, 2, 1, 1, 10, 5);
