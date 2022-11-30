@@ -488,10 +488,11 @@ public class GanttTaskPropertiesBean extends JPanel {
                 String filename2 = secondMerge.getName().substring(0, secondMerge.getName().lastIndexOf('.'));
 
                 File mergedFile = null;
-                if ((ext1.equals("txt")) && (ext2.equals("txt")) && (!filename1.equals(filename2))) {
+                String mergedFileName = "merged_" + filename1 + "_" + filename2 + ".txt";
+                if ((ext1.equals("txt")) && (ext2.equals("txt")) && (!filename1.equals(filename2)) && !areFilesAlreadyMerged(mergedFileName)) {
                     try {
                         // PrintWriter object for file3.txt
-                        mergedFile = new File("merged_" + filename1 + "_" + filename2 + ".txt");
+                        mergedFile = new File(mergedFileName);
                         PrintWriter pw = new PrintWriter(mergedFile);
                         String file1Content = new String(Files.readAllBytes(Paths.get(firstMerge.getAbsolutePath())), StandardCharsets.UTF_8);
                         String file2Content = new String(Files.readAllBytes(Paths.get(secondMerge.getAbsolutePath())), StandardCharsets.UTF_8);
@@ -553,6 +554,16 @@ public class GanttTaskPropertiesBean extends JPanel {
         generalPanel.add(propertiesWrapper);
         generalPanel.add(notesPanel);
         SpringUtilities.makeCompactGrid(generalPanel, 1, 2, 1, 1, 10, 5);
+    }
+
+    private boolean areFilesAlreadyMerged(String mergedFileName) {
+        for (int i = 0; i < this.taskFiles.length; i++) {
+            if (this.taskFiles[i].getName().equals(mergedFileName)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void constructEarliestBegin(Container propertiesPanel) {
