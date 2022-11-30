@@ -51,8 +51,6 @@ class MouseMotionListenerImpl extends MouseMotionListenerBase {
     public void mouseMoved(MouseEvent e) {
         ChartItem itemUnderPoint = myChartController.getChartItemUnderMousePoint(e.getX(), e.getY());
         Task taskUnderPoint = itemUnderPoint == null ? null : itemUnderPoint.getTask();
-        // System.err.println("[OldMouseMotionListenerImpl] mouseMoved:
-        // taskUnderPoint="+taskUnderPoint);
         myChartController.hideTooltip();
         if (taskUnderPoint == null) {
             myChartComponent.setDefaultCursor();
@@ -89,14 +87,9 @@ class MouseMotionListenerImpl extends MouseMotionListenerBase {
                     GanttLanguage.getInstance().formatText(
                             "task.notesTooltip.pattern", taskUnderPoint.getNotes().replace("\n", "<br>")));
         } else if (itemUnderPoint instanceof TaskRegularAreaChartItem) {
-            // If it is a plain task area then either drag the task or create a
-            // dependency,
-            // depending on the settings.
             myChartComponent.setCursor(ChartComponentBase.HAND_CURSOR);
-
             TaskRegularAreaChartItem taskRectArea = ((TaskRegularAreaChartItem) itemUnderPoint);
-            taskRectArea.setMousePos(e.getX(), e.getY());
-            //myChartController.showTooltip(e.getX(), e.getY(), taskRectArea.getTaskInfo());
+            // show task info on mouse over task "rectangle"
             myChartController.showTooltip(e.getX(), e.getY(), GanttLanguage.getInstance().formatText(
                     "task.notesTooltip.pattern", taskRectArea.getTaskInfo().replace("\n", "<br>")));
         } else {

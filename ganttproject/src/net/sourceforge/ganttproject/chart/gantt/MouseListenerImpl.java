@@ -127,12 +127,6 @@ class MouseListenerImpl extends MouseListenerBase {
             // If it is a plain task area then either drag the task or create a
             // dependency,
             // depending on the settings.
-
-//            TaskRegularAreaChartItem taskRectArea = ((TaskRegularAreaChartItem) itemUnderPoint);
-//            taskRectArea.setMousePos(e.getX(), e.getY());
-//            myChartImplementation.showTooltip(e.getX(), e.getY(), taskRectArea.getTaskInfo());
-
-
             if (text.equals(GPAction.getKeyStrokeText("mouse.drag.task"))) {
                 startDragTasks(e, taskUnderPointer);
                 return;
