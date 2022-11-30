@@ -205,9 +205,12 @@ public interface Task extends MutableTask {
 
     List<Document> getAttachments();
 
+    // returns list of files associate with this task
     List<File> getTaskFiles();
 
+    // add file to task
     void addFile(File f);
 
+    // remove file of the task
     void removeFile(File f);
 }

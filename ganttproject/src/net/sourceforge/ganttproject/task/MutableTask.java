@@ -32,8 +32,10 @@ import biz.ganttproject.core.time.TimeDuration;
 public interface MutableTask {
     void setName(String name);
 
+    // add file to task through mutator
     void addFile(File f);
 
+    // remove file of the task through mutator
     void removeFile(File f);
 
     void setMilestone(boolean isMilestone);

@@ -96,8 +96,6 @@ public class TaskImpl implements Task {
 
     private boolean bExpand;
 
-    // private final TaskDependencyCollection myDependencies = new
-    // TaskDependencyCollectionImpl();
     private final ResourceAssignmentCollectionImpl myAssignments;
 
     private final TaskDependencySlice myDependencySlice;
@@ -136,6 +134,7 @@ public class TaskImpl implements Task {
 
     private static final TimeDuration EMPTY_DURATION = new TimeDurationImpl(GPTimeUnitStack.DAY, 0);
 
+    // used to store the files associate with this task
     private List<File> taskFiles;
 
     protected TaskImpl(TaskManagerImpl taskManager, int taskID) {
@@ -336,17 +335,20 @@ public class TaskImpl implements Task {
         return Collections.emptyList();
     }
 
+    // returns the list of list associated with this task
     @Override
     public List<File> getTaskFiles() {
         return this.taskFiles;
     }
 
+    // add file to this task - if already exists dont add
     public void addFile(File f) {
         if (!taskFiles.contains(f)) {
             taskFiles.add(f);
         }
     }
 
+    // remove file from this task.
     public void removeFile(File f) {
         taskFiles.remove(f);
     }
@@ -715,6 +717,7 @@ public class TaskImpl implements Task {
             });
         }
 
+        // add file to task through mutator
         public void addFile(final File f) {
             myCommands.add(new Runnable() {
                 @Override
@@ -724,6 +727,7 @@ public class TaskImpl implements Task {
             });
         }
 
+        // remvoe file from task through mutator
         public void removeFile(final File f) {
             myCommands.add(new Runnable() {
                 @Override
