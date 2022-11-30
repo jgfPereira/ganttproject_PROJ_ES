@@ -162,15 +162,23 @@ public class GanttTaskPropertiesBean extends JPanel {
     private JCheckBox myShowInTimeline;
     private AbstractAction myOnEarliestBeginToggle;
 
+    // file selected on the open/remove files menu/combobox
     private File fileSelected;
 
+    // file selected on the first merge files menu/combobox
     private File fileSelectedMerge1;
 
+    // file selected on the second merge files menu/combobox
     private File fileSelectedMerge2;
+
+    // used to keep track of task files - necessary to update the menus/gui "instantly"
+    // (without having to close and reopen task properties dialog on every change).
     private File[] taskFiles;
 
+    // first file to merge
     private File firstMerge;
 
+    // second file to merge;
     private File secondMerge;
 
 
@@ -269,45 +277,48 @@ public class GanttTaskPropertiesBean extends JPanel {
         propertiesPanel.add(new JLabel(language.getText("webLink")));
         propertiesPanel.add(weblinkBox);
 
-        // create button to add files to a task
+        // create label and button to add files to a task
         propertiesPanel.add(new JLabel("Add File"));
         JPanel fileBtnBox = new JPanel(new BorderLayout(5, 0));
         final JButton addFilesButton = new JButton(UIManager.getIcon("FileChooser.upFolderIcon"));
         addFilesButton.setToolTipText("Associate file with task");
-
         fileBtnBox.add(addFilesButton, BorderLayout.WEST);
         propertiesPanel.add(fileBtnBox);
 
-        // create combo box to choose and open file
+        // create open and remove files buttons
         propertiesPanel.add(new JLabel("Open/Rmv File"));
-        JPanel openFileBtnBox = new JPanel(new BorderLayout(5, 0));
+        JPanel openRemoveFileBtnBox = new JPanel(new BorderLayout(5, 0));
         final JButton openFilesButton = new JButton(UIManager.getIcon("FileView.fileIcon"));
         openFilesButton.setToolTipText("Open file in explorer");
         final JButton removeFilesButton = new JButton((UIManager.getIcon("OptionPane.errorIcon")));
         removeFilesButton.setToolTipText("Remove file from task");
 
+        // get files of the task to auxiliary array
         taskFiles = selectedTasks[0].getTaskFiles().toArray(new File[0]);
+        // create menu/combobox to select files for opening/removal
+        final DefaultComboBoxModel openRemoveFilesMenuModel = new DefaultComboBoxModel(taskFiles);
+        JComboBox openRemoveFilesMenu = new JComboBox(openRemoveFilesMenuModel);
 
-        final DefaultComboBoxModel comboBoxModel = new DefaultComboBoxModel(taskFiles);
-        JComboBox filesMenu = new JComboBox(comboBoxModel);
+        // add elements to open/remove box/container and then to panel
+        openRemoveFileBtnBox.add(openFilesButton, BorderLayout.WEST);
+        openRemoveFileBtnBox.add(openRemoveFilesMenu, BorderLayout.CENTER);
+        openRemoveFileBtnBox.add(removeFilesButton, BorderLayout.EAST);
+        propertiesPanel.add(openRemoveFileBtnBox);
 
-        openFileBtnBox.add(openFilesButton, BorderLayout.WEST);
-        openFileBtnBox.add(filesMenu, BorderLayout.CENTER);
-        openFileBtnBox.add(removeFilesButton, BorderLayout.EAST);
-        propertiesPanel.add(openFileBtnBox);
-
-        // create combo box to merge two files
+        // create merge files button
         propertiesPanel.add(new JLabel("Merge Txt Files"));
         JPanel mergeFileBtnBox = new JPanel(new BorderLayout(5, 0));
         final JButton mergeFilesButton = new JButton(UIManager.getIcon("FileChooser.detailsViewIcon"));
         mergeFilesButton.setToolTipText("Merge two text files into a new file");
 
+        // create first combo box to select first file to merge
         final DefaultComboBoxModel mergeBoxModel = new DefaultComboBoxModel(taskFiles);
         JComboBox mergeFilesMenu = new JComboBox(mergeBoxModel);
         mergeFileBtnBox.add(mergeFilesButton, BorderLayout.WEST);
         mergeFileBtnBox.add(mergeFilesMenu, BorderLayout.CENTER);
         propertiesPanel.add(mergeFileBtnBox);
 
+        // create second combo box to select second file to merge
         propertiesPanel.add(new JLabel("Select second file:"));
         JPanel mergeMenu2Box = new JPanel(new BorderLayout(5, 0));
         final DefaultComboBoxModel mergeBoxModel2 = new DefaultComboBoxModel(taskFiles);
@@ -315,15 +326,18 @@ public class GanttTaskPropertiesBean extends JPanel {
         mergeMenu2Box.add(mergeFilesMenu2, BorderLayout.CENTER);
         propertiesPanel.add(mergeMenu2Box);
 
-
+        // create checkbox to know if should delete the individual/merged files
         propertiesPanel.add(new JLabel("Delete the merged files"));
         final JCheckBox delete_files = new JCheckBox();
         propertiesPanel.add(delete_files);
 
+        // create checkbox to know if should keep the individual/merged files
         propertiesPanel.add(new JLabel("Keep the merged files"));
         final JCheckBox keep_files = new JCheckBox();
         propertiesPanel.add(keep_files);
         keep_files.doClick();
+
+        // Action Listeners of all buttons, checkboxs and JComboBoxs
 
         delete_files.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -362,17 +376,18 @@ public class GanttTaskPropertiesBean extends JPanel {
                         File file = fc.getSelectedFile();
                         TaskMutator mutator = selectedTasks[0].createMutator();
                         mutator.addFile(file);
-
                         mutator.commit();
                         myDependenciesPanel.commit();
                         myAllocationsPanel.commit();
                         myCustomColumnPanel.commit();
 
-                        // update combobox in dynamic way - otherwhise would have to close and reopen task properties dialog
-                        comboBoxModel.addElement(file);
+                        // update comboboxs in dynamic way - otherwhise would have to close and reopen task properties dialog
+                        openRemoveFilesMenuModel.addElement(file);
                         mergeBoxModel.addElement(file);
                         mergeBoxModel2.addElement(file);
 
+                        // add file to auxiliary task files array
+                        // handle as list because its easier and less error prone
                         List<File> tmpFiles = new ArrayList<>(Arrays.asList(taskFiles));
                         tmpFiles.add(file);
                         taskFiles = tmpFiles.toArray(new File[tmpFiles.size()]);
@@ -412,28 +427,27 @@ public class GanttTaskPropertiesBean extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 if (e.getSource() == removeFilesButton && taskFiles.length > 0) {
 
-                    // if no file is selected delete the first one on the JComboBox
-                    List<File> tmpFiles = new ArrayList<>(Arrays.asList(taskFiles));
-
                     File removedFile;
+                    // if no file is selected delete the first one on the JComboBox
                     if (fileSelected == null) {
                         removedFile = taskFiles[0];
-                        tmpFiles.remove(taskFiles[0]);
-                        taskFiles = tmpFiles.toArray(new File[tmpFiles.size()]);
                     } else {
                         removedFile = fileSelected;
-                        tmpFiles.remove(fileSelected);
-                        taskFiles = tmpFiles.toArray(new File[tmpFiles.size()]);
                     }
 
+                    // remove file from auxiliary task files array
+                    // handle as list because its easier and less error prone
+                    List<File> tmpFiles = new ArrayList<>(Arrays.asList(taskFiles));
+                    tmpFiles.remove(removedFile);
+                    taskFiles = tmpFiles.toArray(new File[tmpFiles.size()]);
+
                     // update combobox in dynamic way - otherwhise would have to close and reopen task properties dialog
-                    comboBoxModel.removeElement(removedFile);
+                    openRemoveFilesMenuModel.removeElement(removedFile);
                     mergeBoxModel.removeElement(removedFile);
                     mergeBoxModel2.removeElement(removedFile);
 
                     TaskMutator mutator = selectedTasks[0].createMutator();
                     mutator.removeFile(removedFile);
-
                     mutator.commit();
                     myDependenciesPanel.commit();
                     myAllocationsPanel.commit();
@@ -446,7 +460,7 @@ public class GanttTaskPropertiesBean extends JPanel {
         });
 
 
-        filesMenu.addActionListener(new ActionListener() {
+        openRemoveFilesMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JComboBox cb = (JComboBox) e.getSource();
@@ -484,28 +498,24 @@ public class GanttTaskPropertiesBean extends JPanel {
                         secondMerge = fileSelectedMerge2;
                     }
                 } else {
+                    // only have 0 or 1 file - so cant merge
                     return;
                 }
 
-                String ext1 = firstMerge.getName().substring(firstMerge.getName().lastIndexOf('.') + 1);
-                String ext2 = secondMerge.getName().substring(secondMerge.getName().lastIndexOf('.') + 1);
-                String filename1 = firstMerge.getName().substring(0, firstMerge.getName().lastIndexOf('.'));
-                String filename2 = secondMerge.getName().substring(0, secondMerge.getName().lastIndexOf('.'));
+                String ext1 = getFileExtension(firstMerge);
+                String ext2 = getFileExtension(secondMerge);
+                String filename1 = getFileNameWithoutExtension(firstMerge);
+                String filename2 = getFileNameWithoutExtension(secondMerge);
 
                 File mergedFile = null;
                 String mergedFileName = "merged_" + filename1 + "_" + filename2 + ".txt";
                 if ((ext1.equals("txt")) && (ext2.equals("txt")) && (!filename1.equals(filename2)) && !areFilesAlreadyMerged(mergedFileName)) {
                     try {
-                        // PrintWriter object for file3.txt
                         mergedFile = new File(mergedFileName);
                         PrintWriter pw = new PrintWriter(mergedFile);
-                        String file1Content = new String(Files.readAllBytes(Paths.get(firstMerge.getAbsolutePath())), StandardCharsets.UTF_8);
-                        String file2Content = new String(Files.readAllBytes(Paths.get(secondMerge.getAbsolutePath())), StandardCharsets.UTF_8);
-                        pw.append(file1Content);
-                        pw.append("\n");
-                        pw.append(file2Content);
-                        pw.flush();
-                        pw.close();
+                        String file1Content = getFileContents(firstMerge);
+                        String file2Content = getFileContents(secondMerge);
+                        mergeFilesContents(pw, file1Content, file2Content);
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     }
@@ -513,15 +523,16 @@ public class GanttTaskPropertiesBean extends JPanel {
                     return;
                 }
 
-                comboBoxModel.addElement(mergedFile);
+                // add merged file to the menus/comboxs
+                openRemoveFilesMenuModel.addElement(mergedFile);
                 mergeBoxModel.addElement(mergedFile);
                 mergeBoxModel2.addElement(mergedFile);
 
                 if (delete_files.isSelected()) {
-                    comboBoxModel.removeElement(firstMerge);
+                    openRemoveFilesMenuModel.removeElement(firstMerge);
                     mergeBoxModel.removeElement(firstMerge);
                     mergeBoxModel2.removeElement(firstMerge);
-                    comboBoxModel.removeElement(secondMerge);
+                    openRemoveFilesMenuModel.removeElement(secondMerge);
                     mergeBoxModel.removeElement(secondMerge);
                     mergeBoxModel2.removeElement(secondMerge);
                 }
@@ -532,7 +543,6 @@ public class GanttTaskPropertiesBean extends JPanel {
                     tmpFiles.remove(firstMerge);
                     tmpFiles.remove(secondMerge);
                 }
-
                 taskFiles = tmpFiles.toArray(new File[tmpFiles.size()]);
 
                 TaskMutator mutator = selectedTasks[0].createMutator();
@@ -552,7 +562,6 @@ public class GanttTaskPropertiesBean extends JPanel {
 
 
         SpringUtilities.makeCompactGrid(propertiesPanel, (propertiesPanel.getComponentCount() / 2), 2, 1, 1, 5, 5);
-
         JPanel propertiesWrapper = new JPanel(new BorderLayout());
         propertiesWrapper.add(propertiesPanel, BorderLayout.NORTH);
         generalPanel = new JPanel(new SpringLayout());
@@ -561,6 +570,7 @@ public class GanttTaskPropertiesBean extends JPanel {
         SpringUtilities.makeCompactGrid(generalPanel, 1, 2, 1, 1, 10, 5);
     }
 
+    // used to check if two files had already been merged
     private boolean areFilesAlreadyMerged(String mergedFileName) {
         for (int i = 0; i < this.taskFiles.length; i++) {
             if (this.taskFiles[i].getName().equals(mergedFileName)) {
@@ -569,6 +579,26 @@ public class GanttTaskPropertiesBean extends JPanel {
         }
 
         return false;
+    }
+
+    private String getFileExtension(File f) {
+        return f.getName().substring(f.getName().lastIndexOf('.') + 1);
+    }
+
+    private String getFileNameWithoutExtension(File f) {
+        return f.getName().substring(0, f.getName().lastIndexOf('.'));
+    }
+
+    private String getFileContents(File f) throws IOException {
+        return new String(Files.readAllBytes(Paths.get(f.getAbsolutePath())), StandardCharsets.UTF_8);
+    }
+
+    private void mergeFilesContents(PrintWriter pw, String cont1, String cont2) {
+        pw.append(cont1);
+        pw.append("\n");
+        pw.append(cont2);
+        pw.flush();
+        pw.close();
     }
 
     private void constructEarliestBegin(Container propertiesPanel) {
