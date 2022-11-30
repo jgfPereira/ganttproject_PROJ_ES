@@ -273,6 +273,7 @@ public class GanttTaskPropertiesBean extends JPanel {
         propertiesPanel.add(new JLabel("Add File"));
         JPanel fileBtnBox = new JPanel(new BorderLayout(5, 0));
         final JButton addFilesButton = new JButton(UIManager.getIcon("FileChooser.upFolderIcon"));
+        addFilesButton.setToolTipText("Associate file with task");
 
         fileBtnBox.add(addFilesButton, BorderLayout.WEST);
         propertiesPanel.add(fileBtnBox);
@@ -281,7 +282,9 @@ public class GanttTaskPropertiesBean extends JPanel {
         propertiesPanel.add(new JLabel("Open/Rmv File"));
         JPanel openFileBtnBox = new JPanel(new BorderLayout(5, 0));
         final JButton openFilesButton = new JButton(UIManager.getIcon("FileView.fileIcon"));
+        openFilesButton.setToolTipText("Open file in explorer");
         final JButton removeFilesButton = new JButton((UIManager.getIcon("OptionPane.errorIcon")));
+        removeFilesButton.setToolTipText("Remove file from task");
 
         taskFiles = selectedTasks[0].getTaskFiles().toArray(new File[0]);
 
@@ -297,6 +300,8 @@ public class GanttTaskPropertiesBean extends JPanel {
         propertiesPanel.add(new JLabel("Merge Txt Files"));
         JPanel mergeFileBtnBox = new JPanel(new BorderLayout(5, 0));
         final JButton mergeFilesButton = new JButton(UIManager.getIcon("FileChooser.detailsViewIcon"));
+        mergeFilesButton.setToolTipText("Merge two text files into a new file");
+        
         final DefaultComboBoxModel mergeBoxModel = new DefaultComboBoxModel(taskFiles);
         JComboBox mergeFilesMenu = new JComboBox(mergeBoxModel);
         mergeFileBtnBox.add(mergeFilesButton, BorderLayout.WEST);
@@ -311,11 +316,11 @@ public class GanttTaskPropertiesBean extends JPanel {
         propertiesPanel.add(mergeMenu2Box);
 
 
-        propertiesPanel.add(new JLabel("Delete the merged Files"));
+        propertiesPanel.add(new JLabel("Delete the merged files"));
         final JCheckBox delete_files = new JCheckBox();
         propertiesPanel.add(delete_files);
 
-        propertiesPanel.add(new JLabel("Keep the merged Files"));
+        propertiesPanel.add(new JLabel("Keep the merged files"));
         final JCheckBox keep_files = new JCheckBox();
         propertiesPanel.add(keep_files);
         keep_files.doClick();
