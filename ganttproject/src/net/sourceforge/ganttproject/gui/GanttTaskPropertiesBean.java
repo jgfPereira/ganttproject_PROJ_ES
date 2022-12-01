@@ -381,6 +381,13 @@ public class GanttTaskPropertiesBean extends JPanel {
                         myAllocationsPanel.commit();
                         myCustomColumnPanel.commit();
 
+                        // if this was not done the file would be added "temporarily" (one more time)
+                        // and only after closing and reopening the properties dialog it would be "deleted".
+                        final boolean isFileAlreadyAdded = isFileAlreadyAdded(file);
+                        if (isFileAlreadyAdded) {
+                            return;
+                        }
+
                         // update comboboxs in dynamic way - otherwhise would have to close and reopen task properties dialog
                         openRemoveFilesMenuModel.addElement(file);
                         mergeBoxModel.addElement(file);
@@ -391,8 +398,6 @@ public class GanttTaskPropertiesBean extends JPanel {
                         List<File> tmpFiles = new ArrayList<>(Arrays.asList(taskFiles));
                         tmpFiles.add(file);
                         taskFiles = tmpFiles.toArray(new File[tmpFiles.size()]);
-
-
                     }
                 }
             }
@@ -599,6 +604,17 @@ public class GanttTaskPropertiesBean extends JPanel {
         pw.append(cont2);
         pw.flush();
         pw.close();
+    }
+
+    // check if a file already exists inside taskFiles auxiliary array.
+    // In the task itself it only adds a file, if the list of files does not contain the file.
+    private boolean isFileAlreadyAdded(File file) {
+        for (File f : this.taskFiles) {
+            if (f.equals(file)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void constructEarliestBegin(Container propertiesPanel) {
